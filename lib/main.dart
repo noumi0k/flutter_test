@@ -29,6 +29,7 @@ class MyFadeTest extends StatefulWidget {
 class _MyFadeTest extends State<MyFadeTest> with TickerProviderStateMixin {
   AnimationController controller;
   CurvedAnimation curve;
+  var visibleIconFlag = false;
 
   @override
   void initState() {
@@ -57,9 +58,18 @@ class _MyFadeTest extends State<MyFadeTest> with TickerProviderStateMixin {
         tooltip: 'Fade',
         child: Icon(Icons.brush),
         onPressed: () {
-          controller.forward();
+          changeButton();
         },
       ),
     );
+  }
+
+  void changeButton() {
+    if (visibleIconFlag) {
+      controller.reverse();
+    } else {
+      controller.forward();
+    }
+    visibleIconFlag = visibleIconFlag ? false : true;
   }
 }
