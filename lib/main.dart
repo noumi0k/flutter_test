@@ -2,116 +2,65 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(SampleApp());
+}
 
-class MyApp extends StatelessWidget {
+class SampleApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Startup Name Generator',
+      title: 'Sample App',
       theme: ThemeData(
-        // Add the 3 lines from here...
-        primaryColor: Colors.white,
-      ), // ... to here.
-      home: RandomWords(),
+        primarySwatch: Colors.blue,
+      ),
+      home: SampleAppPage(),
     );
   }
 }
 
-class RandomWords extends StatefulWidget {
+class SampleAppPage extends StatefulWidget {
+  SampleAppPage({Key key}) : super(key: key);
+
   @override
-  _RandomWordsState createState() => _RandomWordsState();
+  _SampleAppPageState createState() => _SampleAppPageState();
 }
 
-class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _saved = Set<WordPair>(); // NEW
-  final _biggerFont = TextStyle(fontSize: 18.0);
+class _SampleAppPageState extends State<SampleAppPage> {
+  // Default value for toggle
+  bool toggle = true;
+
+  void _toggle() {
+    setState(() {
+      toggle = !toggle;
+    });
+  }
+
+  _getToggleChild() {
+    if (toggle) {
+      return Text('Toggle One');
+    } else {
+      return MaterialButton(onPressed: () {}, child: Text('Toggle Two'));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
-        actions: [
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-        ],
+        title: Text("Sample App"),
       ),
-      body: _buildSuggestions(),
-    );
-  }
-
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        // NEW lines from here...
-        builder: (BuildContext context) {
-          final tiles = _saved.map(
-            (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Saved Suggestions'),
-            ),
-            body: ListView(children: divided),
-          );
-        }, // ...to here.
+      body: Center(
+        child: _getToggleChild(),
       ),
-    );
-  }
-
-  Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemBuilder: /*1*/ (context, i) {
-          if (i.isOdd) return Divider();
-          /*2*/
-
-          final index = i ~/ 2; /*3*/
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10)); /*4*/
-          }
-          return _buildRow(_suggestions[index]);
-        });
-  }
-
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair); // NEW
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _toggle,
+        tooltip: 'Update Text',
+        child: Icon(Icons.update),
       ),
-      trailing: Icon(
-        // NEW from here...
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ), // ... to here.
-      onTap: () {
-        // NEW lines from here...
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      }, // ... to here.
     );
   }
 }
