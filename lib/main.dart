@@ -25,12 +25,19 @@ class SampleAppPage extends StatefulWidget {
   _SampleAppPageState createState() => _SampleAppPageState();
 }
 
-class _SampleAppPageState extends State<SampleAppPage> {
+class _SampleAppPageState extends State<SampleAppPage>
+    with SingleTickerProviderStateMixin {
   List widgets = [];
+
+  AnimationController controller;
+  CurvedAnimation curve;
 
   @override
   void initState() {
     super.initState();
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 2000), vsync: this);
+    curve = CurvedAnimation(parent: controller, curve: Curves.easeIn);
   }
 
   @override
@@ -51,11 +58,17 @@ class _SampleAppPageState extends State<SampleAppPage> {
                 Text('Column Four'),
                 Center(
                     child: GestureDetector(
-                  child: FlutterLogo(
-                    size: 200.0,
-                  ),
-                  onTap: () {
-                    print("tap");
+                  child: RotationTransition(
+                      turns: curve,
+                      child: FlutterLogo(
+                        size: 200.0,
+                      )),
+                  onDoubleTap: () {
+                    if (controller.isCompleted) {
+                      controller.reverse();
+                    } else {
+                      controller.forward();
+                    }
                   },
                 )),
                 RaisedButton(
